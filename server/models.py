@@ -20,9 +20,24 @@ class User(db.Model, SerializerMixin):
     playlists = db.relationship("Playlist", back_populates="user")
 
 # Add serialization rules
-    serialize_rules = ('-playlists.user',)
+    serialize_rules = ('-playlists',)
 
 # Add validation
+    @validates("username")
+    def validates_username(self, key, value):
+        if (not isinstance(value, str)) or (len(value) < 8):
+            raise ValueError("Username must be at least 8 characters.")
+        else:
+            return value
+
+    @validates("email")
+    def validates_email(self, key, value):
+        if (not isinstance(value, str)) or ('@' not in value):
+            raise ValueError("Inclue @ for email")
+        else:
+            return value
+
+
     def __repr__(self):
         return f"<User {self.id}, {self.username}, {self.email}>"
 
@@ -36,27 +51,25 @@ class Playlist(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
 # Add Playlist realationship
-    playlist_songs = db.relationship("PlaylistSong", back_populates="playlists", cascade="all")
+    playlist_songs = db.relationship("PlaylistSong", back_populates="playlist", cascade="all")
     user = db.relationship("User", back_populates="playlists", cascade="all")
+
 # Add serialization rules
-    serialize_rules = ("-playlist_songs",)
+    serialize_rules = ("-playlist_songs", "-user", )
 
 # Add validation
     @validates("name")
     def validates_name(self, key, value):
-        if (value == None) or (value == ""):
-            return (f"Playlist #{self.id}")
-        pass
+        if (not isinstance(value, str)) or (len(value) >= 101):
+            raise ValueError("Max characters for description reached.")
+        else:
+            return value
 
-        # if (not isinstance(value,str)) or (not (3 <= len(value) <=100)):
-        #     raise ValueError("Username must be between 3 and 100 characters")
-        # else:
-        #     return (f"Playlist #{self.id}")
 
     @validates("description")
     def validates_description(self, key, value):
         if (not isinstance(value,str)) or (len(value) >= 401):
-            raise ValueError("Max characters for description reached!")
+            raise ValueError("Max characters for description reached.")
         else:
             return value
 
@@ -75,12 +88,12 @@ class Song(db.Model, SerializerMixin):
     artist_id = db.Column(db.Integer, db.ForeignKey("artists.id"))
 
 # Add Song Relationship
-    playlist_songs = db.relationship("PlaylistSong", back_populates="songs", cascade="all")
+    playlist_songs = db.relationship("PlaylistSong", back_populates="song", cascade="all")
     artist = db.relationship("Artist", back_populates="songs", cascade="all")
 
 
 # Add serialization rules
-    serialize_rules = ("-playlist_songs", )
+    serialize_rules = ("-playlist_songs", "-artist")
 
     def __repr__(self):
         return f"<Song {self.id}: {self.name}, {self.duration}>"
@@ -99,7 +112,7 @@ class Artist(db.Model, SerializerMixin):
     songs = db.relationship("Song", back_populates="artist")
 
 # Add serialization rules
-    serialize_rules = ("-songs.artist",)
+    serialize_rules = ("-songs",)
 
 # Add validation
 
@@ -113,11 +126,11 @@ class PlaylistSong(db.Model, SerializerMixin):
     song_id = db.Column(db.Integer, db.ForeignKey("songs.id"))
 
 # Add relationships
-    playlists = db.relationship("Playlist", back_populates = "playlist_songs")
-    songs = db.relationship("Song", back_populates = "playlist_songs")
+    playlist = db.relationship("Playlist", back_populates = "playlist_songs")
+    song = db.relationship("Song", back_populates = "playlist_songs")
 
 # Add serialization rules
-    serialize_rules = ("-playlist.playlist_songs", "song.playlist_songs")
+    serialize_rules = ("-playlist", "-song",)
 
 
 # Add validation

@@ -34,11 +34,34 @@ CORS(app)
 
 @app.route('/')
 def index():
-    return '<h1>Welcome Aboard!</h1>'
+    return '<h1>Welcome to your Personal Playlist Manager!</h1>'
 
 @app.route('/playlists')
-def get_playlist():
-    pass
+def get_playlists():
+    playlists = []
+    for playlist in Playlist.query.all():
+        playlist_dict = playlist.to_dict()
+        playlists.append(playlist_dict)
+
+    response = make_response(
+        playlists, 200
+    )
+    return response
+
+@app.route('/playlists/<int:id>')
+def playlist_by_id(id):
+    playlist = Playlist.query.filter(Playlist.id == id).first()
+
+    if playlist:
+        body = playlist.to_dict()
+        status = 200
+    else:
+        body = {"message": f'Playlist {id} not found.'}
+        status = 404
+
+    return make_response(body, status)
+
+
 
 
 

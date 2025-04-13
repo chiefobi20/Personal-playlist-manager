@@ -23,17 +23,13 @@ if __name__ == '__main__':
         Playlist.query.delete()
 
         print("Starting seed...")
-        users = []
         # Seed code goes here!
         # Add some User instances to the list
-        for n in range(5):
-            user = User(username=fake.user_name(), email=fake.email(), password_hash=fake.password())
-            users.append(user)
-        # users.append(User(username="musicmeister2", email="ilovemusic@email.com", password_hash="music"))
-        # users.append(User(username="music_fiend", email="iliveformusic@email.com", password_hash="ahaidjbf"))
-        # users.append(User(username="harmonicmaster", email="musicdestiny@email.com", password_hash="ebube"))
-        # users.append(User(username="barnacleboy", email="musicrocks@email.com", password_hash="djuaoub"))
-        db.session.add_all(users)
+        user1 = (User(username="musicmeister2", email="ilovemusic@email.com", password_hash="music"))
+        user2 = (User(username="music_fiend", email="iliveformusic@email.com", password_hash="ahaidjbf"))
+        user3 = (User(username="harmonicmaster", email="musicdestiny@email.com", password_hash="ebube"))
+        user4 = (User(username="barnacleboy", email="musicrocks@email.com", password_hash="djuaoub"))
+        db.session.add_all([user1, user2, user3, user4])
         db.session.commit()
 
 
@@ -45,15 +41,25 @@ if __name__ == '__main__':
         db.session.add_all([Chris, Hov, Mike])
         db.session.commit()
 
-        songs = []
-        songs.append(Song(name="You Rock My World", duration=339, artist=Mike))
-        songs.append(Song(name="Dirt Off Your Shoulder", duration=239, artist=Hov))
-        songs.append(Song(name="Fine China", duration=213, artist=Chris))
-        songs.append(Song(name="Beat It", duration=258, artist=Mike))
-        songs.append(Song(name="All I Need", duration=265, artist=Hov))
+        # Add Song instances to the list
+        song1 = (Song(name="You Rock My World", duration=339, artist=Mike))
+        song2 = (Song(name="Dirt Off Your Shoulder", duration=239, artist=Hov))
+        song3 = (Song(name="Fine China", duration=213, artist=Chris))
+        song4 = (Song(name="Beat It", duration=258, artist=Mike))
+        song5 = (Song(name="All I Need", duration=265, artist=Hov))
 
-        db.session.add_all(songs)
+        db.session.add_all([song1, song2, song3, song4, song5])
         db.session.commit()
+
+        # Add Playlist instance to the list
+        playlists = []
+        playlists.append(Playlist(name="Hip Hop Vibes", description="My tunes to listen to for when I need a little pick me up.", user=user1))
+        playlists.append(Playlist(name="Pop and Chill", description="For my impromptu dance sessions.", user=user1))
+        playlists.append(Playlist(name="Downtime", description="Tunes to help me get away from reality.", user=user2))
+
+        db.session.add_all(playlists)
+        db.session.commit()
+
 
 
         print("Seeding successful!")
