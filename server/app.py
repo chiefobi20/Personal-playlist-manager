@@ -61,6 +61,121 @@ def playlist_by_id(id):
 
     return make_response(body, status)
 
+@app.route('/playlists/<int:id>', methods=['DELETE'])
+def delete_playlist_by_id(id):
+    playlist = Playlist.query.filter(Playlist.id == id).first()
+
+    db.session.delete(playlist)
+    db.session.commit()
+
+    response_body = {
+        "delete_successful": True,
+        "message": "Playlist has been deleted."
+    }
+    response = make_response(response_body, 200)
+
+    return response
+
+@app.route('/playlists', methods=['POST'])
+def create_playlist():
+    new_playlist = Playlist(
+        name=request.form.get("name"),
+        description=request.form.get("description"),
+        user_id=request.form.get("user_id")
+    )
+
+    db.session.add(new_playlist)
+    db.session.commit()
+
+    playlist_dict = new_playlist.to_dict()
+
+    response = make_response(playlist_dict, 201)
+    return response
+
+@app.route('/playlists/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+def update_playlist(id):
+    updated_playlist = Playlist.query.filter(Playlist.id == id).first()
+    for attr in request.form:
+        setattr(updated_playlist, attr, request.form.get(attr))
+
+    db.session.add(updated_playlist)
+    db.session.commit()
+
+    playlist_dict = updated_playlist.to_dict()
+
+    response = make_response(playlist_dict, 200)
+    return response
+
+@app.route('/users', methods=['GET', 'POST'])
+def users():
+    if request.method == 'GET':
+        users = []
+        for user in User.query.all():
+            user_dict = user.to_dict()
+            users.append(user_dict)
+
+        response = make_response(users, 200)
+
+        return response
+
+    elif request.method == 'POST':
+        new_user = User(
+            username=request.form.get("username"),
+            email=request.form.get("email"),
+            password_hash=request.form.get("password"),
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        user_dict = new_user.to_dict()
+
+        response = make_response(user_dict, 201)
+        return response
+
+@app.route('/users/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+def user_by_id(id):
+    user = User.query.filter(User.id == id).first()
+
+    if user == None:
+        response_body = {
+            "message": "This account cannot be found. Please try again."
+        }
+        response = make_response(response_body, 404)
+        return response
+
+    else:
+        if request.method == 'GET':
+            user_dict = user.to_dict()
+
+            response = make_response(user_dict, 200)
+            return response
+
+        elif request.method == 'PATCH':
+            for attr in request.form:
+                setattr(user, attr, request.form.get(attr))
+
+            db.session.add(user)
+            db.session.commit()
+
+            user_dict = user.to_dict()
+
+            response = make_response(
+                user_dict, 200
+            )
+            return response
+
+        elif request.method == 'DELETE':
+            db.session.delete(user)
+            db.session.commit()
+
+            response_body = {
+                "delete_successful": True,
+                "message": "User account has been deleted."
+            }
+            response = make_response(response_body, 200)
+            return response
+
 
 
 
