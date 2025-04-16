@@ -20,7 +20,7 @@ class User(db.Model, SerializerMixin):
     playlists = db.relationship("Playlist", back_populates="user")
 
 # Add serialization rules
-    serialize_rules = ('-playlists',)
+    serialize_rules = ('-playlists.user',)
 
 # Add validation
     @validates("username")
@@ -52,7 +52,7 @@ class Playlist(db.Model, SerializerMixin):
 
 # Add Playlist realationship
     playlist_songs = db.relationship("PlaylistSong", back_populates="playlist", cascade="all")
-    user = db.relationship("User", back_populates="playlists", cascade="all")
+    user = db.relationship("User", back_populates="playlists")
 
 # Add serialization rules
     serialize_rules = ("-playlist_songs", "-user", )
@@ -89,16 +89,17 @@ class Song(db.Model, SerializerMixin):
 
 # Add Song Relationship
     playlist_songs = db.relationship("PlaylistSong", back_populates="song", cascade="all")
-    artist = db.relationship("Artist", back_populates="songs", cascade="all")
+    artist = db.relationship("Artist", back_populates="songs")
 
 
 # Add serialization rules
     serialize_rules = ("-playlist_songs", "-artist")
 
-    def __repr__(self):
-        return f"<Song {self.id}: {self.name}, {self.duration}>"
+# Add validations
 
-# Add validation
+    def __repr__(self):
+        return f"<Song {self.id}: {self.name}, {self.duration} s>"
+
 
 
 class Artist(db.Model, SerializerMixin):
@@ -109,12 +110,15 @@ class Artist(db.Model, SerializerMixin):
     genre = db.Column(db.String)
 
 # Add Artist Relationships
-    songs = db.relationship("Song", back_populates="artist")
+    songs = db.relationship("Song", back_populates="artist", cascade="all")
 
 # Add serialization rules
-    serialize_rules = ("-songs",)
+    serialize_rules = ("-songs.artist",)
 
-# Add validation
+# Add validations
+
+    def __repr__(self):
+        return f"<Artist {self.id}: {self.name}, {self.genre}>"
 
 
 class PlaylistSong(db.Model, SerializerMixin):
@@ -130,8 +134,7 @@ class PlaylistSong(db.Model, SerializerMixin):
     song = db.relationship("Song", back_populates = "playlist_songs")
 
 # Add serialization rules
-    serialize_rules = ("-playlist", "-song",)
+    serialize_rules = ("-playlist.playlist_songs", "-song.playlist_songs",)
 
-
-# Add validation
-
+    def __repr__(self):
+        return f"<PlaylistSong {self.id}: {self.playlist_id}, {self.song_id}>"

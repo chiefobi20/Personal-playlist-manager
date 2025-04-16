@@ -8,7 +8,7 @@ from faker import Faker
 
 # Local imports
 from app import app
-from models import db, User, Artist, Song, Playlist
+from models import db, User, Artist, Song, Playlist, PlaylistSong
 
 if __name__ == '__main__':
 
@@ -21,6 +21,7 @@ if __name__ == '__main__':
         Artist.query.delete()
         Song.query.delete()
         Playlist.query.delete()
+        PlaylistSong.query.delete()
 
         print("Starting seed...")
         # Seed code goes here!
@@ -52,14 +53,23 @@ if __name__ == '__main__':
         db.session.commit()
 
         # Add Playlist instance to the list
-        playlists = []
-        playlists.append(Playlist(name="Hip Hop Vibes", description="My tunes to listen to for when I need a little pick me up.", user=user1))
-        playlists.append(Playlist(name="Pop and Chill", description="For my impromptu dance sessions.", user=user1))
-        playlists.append(Playlist(name="Downtime", description="Tunes to help me get away from reality.", user=user2))
+        play1 = (Playlist(name="Hip Hop Vibes", description="My tunes to listen to for when I need a little pick me up.", user=user1))
+        play2 = (Playlist(name="Pop and Chill", description="For my impromptu dance sessions.", user=user1))
+        play3 = (Playlist(name="Downtime", description="Tunes to help me get away from reality.", user=user2))
 
-        db.session.add_all(playlists)
+        db.session.add_all([play1, play2, play3])
         db.session.commit()
 
+        # Many to many relationship between playlist and song (PlaylistSong)
+        ps1 = PlaylistSong(playlist=play1, song=song1)
+        ps2 = PlaylistSong(playlist=play2, song=song1)
+        ps3 = PlaylistSong(playlist=play1, song=song2)
+        ps4 = PlaylistSong(playlist=play1, song=song4)
+        ps5 = PlaylistSong(playlist=play2, song=song3)
+        playlistSongs = [ps1, ps2, ps3, ps4, ps5]
+
+        db.session.add_all(playlistSongs)
+        db.session.commit()
 
 
         print("Seeding successful!")
