@@ -1,6 +1,7 @@
 import App from "./components/App";
 import ErrorPage from "./components/ErrorPage";
 import PlaylistsList from "./components/PlaylistsList";
+import UsersList from "./components/UsersList";
 
 const routes = [
     {
@@ -11,6 +12,10 @@ const routes = [
             {
                 path: "/",
                 element: <PlaylistsList/>
+            },
+            {
+                path: "/users",
+                element: <UsersList/>
             }
         ]
     }

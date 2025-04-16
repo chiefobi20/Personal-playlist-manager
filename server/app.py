@@ -121,7 +121,7 @@ def users():
     if request.method == 'GET':
         users = []
         for user in User.query.all():
-            user_dict = user.to_dict()
+            user_dict = user.to_dict(rules=("-password_hash",))
             users.append(user_dict)
 
         response = make_response(users, 200)
