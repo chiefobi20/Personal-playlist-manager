@@ -61,27 +61,37 @@ def playlist_by_id(id):
 
     return make_response(body, status)
 
+
 @app.route('/playlists/<int:id>', methods=['DELETE'])
 def delete_playlist_by_id(id):
     playlist = Playlist.query.filter(Playlist.id == id).first()
 
-    db.session.delete(playlist)
-    db.session.commit()
+    if playlist:
+        db.session.delete(playlist)
+        db.session.commit()
 
-    response_body = {
-        "delete_successful": True,
-        "message": "Playlist has been deleted."
-    }
-    response = make_response(response_body, 200)
+        response_body = {
+            "delete_successful": True,
+            "message": "Playlist has been deleted."
+        }
 
-    return response
+        response = make_response(response_body, 200)
+        return response
+
+    else:
+        response_body = {
+            "message": "Playlist not found."
+        }
+
+        response = make_response(response_body, 404)
+        return response
 
 @app.route('/playlists', methods=['POST'])
 def create_playlist():
     new_playlist = Playlist(
-        name=request.form.get("name"),
-        description=request.form.get("description"),
-        user_id=request.form.get("user_id")
+        name=request.json.get("name"),
+        description=request.json.get("description"),
+        user_id=request.json.get("user_id")
     )
 
     db.session.add(new_playlist)
@@ -92,11 +102,11 @@ def create_playlist():
     response = make_response(playlist_dict, 201)
     return response
 
-@app.route('/playlists/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@app.route('/playlists/<int:id>', methods=['PATCH'])
 def update_playlist(id):
     updated_playlist = Playlist.query.filter(Playlist.id == id).first()
-    for attr in request.form:
-        setattr(updated_playlist, attr, request.form.get(attr))
+    for attr in request.json:
+        setattr(updated_playlist, attr, request.json.get(attr))
 
     db.session.add(updated_playlist)
     db.session.commit()
@@ -120,9 +130,9 @@ def users():
 
     elif request.method == 'POST':
         new_user = User(
-            username=request.form.get("username"),
-            email=request.form.get("email"),
-            password_hash=request.form.get("password"),
+            username=request.json.get("username"),
+            email=request.json.get("email"),
+            password_hash=request.json.get("password"),
         )
 
         db.session.add(new_user)
@@ -152,8 +162,8 @@ def user_by_id(id):
             return response
 
         elif request.method == 'PATCH':
-            for attr in request.form:
-                setattr(user, attr, request.form.get(attr))
+            for attr in request.json:
+                setattr(user, attr, request.json.get(attr))
 
             db.session.add(user)
             db.session.commit()
@@ -190,9 +200,9 @@ def songs():
 
     elif request.method == 'POST':
         new_song = Song(
-            name=request.form.get("name"),
-            duration=request.form.get("duration"),
-            artist_id=request.form.get("artist_id")
+            name=request.json.get("name"),
+            duration=request.json.get("duration"),
+            artist_id=request.json.get("artist_id")
         )
 
         db.session.all(new_song)
@@ -224,8 +234,8 @@ def songs_by_id(id):
 
 
         elif request.method == 'PATCH':
-            for attr in request.form:
-                setattr(song, attr, request.form.get(attr))
+            for attr in request.json:
+                setattr(song, attr, request.json.get(attr))
 
             db.session.add(song)
             db.session.commit()
@@ -260,8 +270,8 @@ def artists():
 
     elif request.method == 'POST':
         new_artist = Artist(
-            name=request.form.get("name"),
-            genre=request.form.get("genre"),
+            name=request.json.get("name"),
+            genre=request.json.get("genre"),
         )
 
         db.session.add(new_artist)
@@ -292,8 +302,8 @@ def artists_by_id(id):
             return response
 
         elif request.method == 'PATCH':
-            for attr in request.form:
-                setattr(artist, attr, request.form.get(attr))
+            for attr in request.json:
+                setattr(artist, attr, request.json.get(attr))
 
             db.session.add(artist)
             db.session.commit()
