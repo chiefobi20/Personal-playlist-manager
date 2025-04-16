@@ -1,5 +1,4 @@
 function Playlist({playlist}){
-    console.log(playlist)
     return(
         <li>
             <p>Playlist number {playlist.id}</p>
