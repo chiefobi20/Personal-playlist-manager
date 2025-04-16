@@ -17,7 +17,7 @@ class User(db.Model, SerializerMixin):
     password_hash = db.Column(db.String)
 
 # Add User relationship
-    playlists = db.relationship("Playlist", back_populates="user")
+    playlists = db.relationship("Playlist", back_populates="user", cascade="all")
 
 # Add serialization rules
     serialize_rules = ('-playlists.user',)
@@ -33,7 +33,7 @@ class User(db.Model, SerializerMixin):
     @validates("email")
     def validates_email(self, key, value):
         if (not isinstance(value, str)) or ('@' not in value):
-            raise ValueError("Inclue @ for email")
+            raise ValueError("Include @ for email")
         else:
             return value
 
