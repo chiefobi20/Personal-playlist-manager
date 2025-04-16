@@ -7,6 +7,7 @@ function NavBar(){
         <NavLink to="/artists">Artists</NavLink>
         <NavLink to="/songs">Songs</NavLink>
         <NavLink to="/about">About</NavLink>
+        <NavLink to="/create_playlist">Create Playlist</NavLink>
     </nav>
 }
 

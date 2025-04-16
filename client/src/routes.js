@@ -5,6 +5,7 @@ import UsersList from "./components/UsersList";
 import About from "./components/About";
 import ArtistsList from "./components/ArtistsList";
 import SongsList from "./components/SongsList";
+import CreatePlaylist from "./components/CreatePlaylist";
 
 const routes = [
     {
@@ -31,6 +32,10 @@ const routes = [
             {
                 path: "/songs",
                 element: <SongsList/>
+            },
+            {
+                path: "/create_playlist",
+                element: <CreatePlaylist/>
             }
         ]
     }

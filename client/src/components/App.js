@@ -47,6 +47,17 @@ function App() {
     })
   }
 
+  function deletePlaylist(id){
+    const filteredPlaylists = playlists.filter(playlist => {
+      return playlist.id !== id
+    })
+    setPlaylists(filteredPlaylists)
+  }
+
+  function addPlaylist(newPlaylist){
+    setPlaylists([...playlists, newPlaylist])
+  }
+
 
   return (
     <div>
@@ -58,7 +69,9 @@ function App() {
           playlists: playlists,
           users: users,
           artists: artists,
-          songs: songs
+          songs: songs,
+          deletePlaylist: deletePlaylist,
+          addPlaylist: addPlaylist
         }
       }/>
     </div>
