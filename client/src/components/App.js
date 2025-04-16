@@ -1,8 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+
 
 function App() {
-  return <h1>Project Client</h1>;
+
+  const [playlists, setPlaylists] = useState([])
+
+
+  useEffect(getPlaylists, [])
+
+  function getPlaylists() {
+    fetch("/playlists")
+    .then(response => response.json())
+    .then(playlistsData => {
+      setPlaylists(playlistsData)
+    })
+  }
+
+  return (
+    <div>
+      <h1>Welcome to Your Music Playlist Manager!</h1>
+      <Outlet context={
+        {
+          playlists: playlists
+        }
+      }/>
+    </div>
+
+  );
+
 }
 
 export default App;
